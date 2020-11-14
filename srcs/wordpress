@@ -1,0 +1,27 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+	listen 443 ssl http2 default_server;
+    listen [::]:443 ssl http2 default_server;
+
+    root /var/www/html;
+    index index.php index.html index.htm index.nginx-debian.html;
+
+    server_name localhost;
+	include /etc/nginx/snippets/self-signed.conf;
+	include /etc/nginx/snippets/ssl-params.conf;
+    
+	location / {
+		autoindex on;
+		try_files $uri $uri/ /index.php$is_args$args;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
